@@ -154,6 +154,34 @@ We should also document how each test case was chosen, including white box test.
 }
 // ... other test cases ...
 ```
+## Testing with TypeScript 
+Adding testing to a typescript project is easy the instructions below follow 
+those provided by Freeman from his book Essential TypeScript. 
 
+```bash
+npm install --save-dev jest ts-jest
+```
 
+Then in our jest.config.js we add
+```js
+module.exports = {
+    roots: ["src"],
+    transform: {"^.+\\.tsx?$": "ts-jest"}
+}
+```
+To test things out create a main.ts file in src 
+```ts
+function sum(a: number, b: number) {
+    returb a + b
+}
+```
 
+Next create a sum.test.js file in `/src/test` 
+
+```js
+const sum = require('../main')
+
+test('Expect sum of 10 + 4 to be 14', () => {
+    expect(sum(10,4)).toBe(14)
+})
+```
