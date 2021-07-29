@@ -185,3 +185,52 @@ test('Expect sum of 10 + 4 to be 14', () => {
     expect(sum(10,4)).toBe(14)
 })
 ```
+
+# Reading 4 Code Review
+
+### Objects for Today's Reading
+- Code review: Reading and discussing code written by somebody else
+- General principles of good coding: things you can look for in every code 
+review, regardless of programming language or program purpose. 
+
+## Code Review 
+Code reviews serve two purposes 
+- **Improving the code:** Finding bugs, anticipating possible bugs, checking the 
+clarity of the code, and checking for consistency with the project's style 
+standards. 
+
+- **Improving the programmer** Code Review is an important way that programmers
+learn and teach each other, about language features, design changes, or coding
+standards. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\
