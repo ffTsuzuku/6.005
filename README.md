@@ -204,9 +204,51 @@ learn and teach each other, about language features, design changes, or coding
 standards. 
 
 
+## Don't Repeat Yourself (DRY)
+Duplicated code is a risk to safety, If you have identical or very similar code
+in two places, then you risk copying over a bug into two locations. A maintainer
+may then fix the bug in one place but not the other. Copy and paste should be
+used with much caution.
 
+## Comments Where needed
+It's important to write specifications for functions to document assumptions
+as well to make our code easier to understand. Here is one example of a function
+specification. 
 
+```java
+/**
+ * Compute the hailstone sequence.
+ * See http://en.wikipedia.org/wiki/Collatz_conjecture#Statement_of_the_problem
+ * @param n starting number of sequence; requires n > 0.
+ * @return the hailstone sequence starting at n and ending with 1.
+ *         For example, hailstone(3)=[3,10,5,16,8,4,2,1].
+ */
+public static List<Integer> hailstoneSequence(int n) {
+    ...
+}
+```
 
+Be mindful when writing comments, there is no need to transpile code to english
+for instance, the following is an example of poor commenting. 
+
+```java
+while (n != 1) { // test whether n is 1   (don't write comments like this!)
+   ++i; // increment i
+   l.add(n); // add n to l
+}
+```
+
+## One Purpose For Each Variable
+Do not reuse paramters, and don't reuse variables. Feel free to create as many
+variables as needed, they are not a scare resource. Make sure you give your 
+variable good names. When possible its best to declare variables as constants. 
+
+Here are some guides to naming variables.
+
+-methodsAreNamesWithCamelCase
+-variablesAreAlsoCamelCase
+-CONSTANTS_ARE_IN_ALL_CAPS_WITH_UNDERSCORES
+-ClassesAreCapitalized
 
 
 
