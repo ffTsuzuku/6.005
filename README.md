@@ -1,278 +1,266 @@
+# Reading 1: Static Checking
 
+### Objections for Today's Reading
 
-# Reading 3: Testing
+-   static typing
+-   three properties of good software
 
-### Objectives
+## Hailstone Sequence
 
-The Core Ideas of this section revolve around:
-- Understanding the balue of testing, and know the process of test-first 
-programming
-- Be able to design a test suite for a method by paritioning its input and 
-output space and choosing good test cases.
-- Be able to judge a test suite by measuring its code coverage; and integration
-test, and automated regression testing. 
+The Hailstone Sequence states that given a number **N**
 
-## Validation
+-   If N is **odd** set **N** to be `3N+1`.
+-   If **N** is **even** set **N** to be `N/2`
 
-Testing is an example of a more general process called validation. The purpose 
-of validation is to test and prove the correctness of your software. Validation
-can be broken  down into three components.
-
-- **Formal Reasoning** about a program, usually called verification. 
-Verification constructs a formal proof that a porgram is correct. Verification
-is tedious to do by hand, and automated tooling is still an active area of
-research. 
-
-- **Code Review** Having somebody else carefully read your code, and reason 
-informally about it, can be a good way to uncover bugs. It's much like having
-someone else proof read your essay. 
-
-- **Testing** Running the program on carefully selected inpits and checking the
-results.
-
-Even with the best validation, its very hard to achieve perfect quality in 
-software, the typical defect rate per kloc (1,000 lines of code).
-
-- 1-10 defects/kloc: Typical Industry Software.
-
-- 0.1 - 1 defects/kloc: High-quality validation. The Java libraries might 
-achieve this level of correctness. 
-
-- 0.01 - 0.1 defects/kloc: The very best, safety-critical validation. NASA and
-companies like Praxis can achieve this level. 
-
-## Test-first Programming
-Do not leave testing until the very end, after you have finished writting your
-code. It is much easier to test your code as you write it. 
-
-In test-first-programming, you write test before you even write any code. The
-development of a single function proceeds in this order: 
-
-1. Write a specification of the function.
-2. Write test that exercise the specification.
-3. Write the actual code. Once your code passes the test you wrote, you're done.
-
-The **specification** describes the input and output behavior the function.
-It gives the types of the paramters and any additional constraints on them.
-For example a function that calculates the square root must have a positive 
-parameter. Specifications can be buggy too, writing test is a good way to 
-uncover these kind of problems early, before you've wasted time writing an 
-implementation of buggy spec. 
-
-## Choosing Test Cases by Partitioning
-In order to write a good test suite we want to divide our possible testing 
-inputs into **subdomains**, with each subdomain consisting of a set of inputs.
-
-### Example: BigInteger.multiply()
-Let's look at an example `BigInteger` is a class built into the Java library
-that can represent integers of any size, unlike the primitive types `int` and
-`long`. BigInteger has a method multipy that multiplies two BigInteger values
-together. 
-
-```java
-/**
- *@param val another BigIntger
- *@return a BigInteger whose value is (this * val)
- */
-public BigInteger multiply(BigInteger val)
+```
+2, 1
+3, 10, 5, 16, 8, 4, 2, 1
+4, 2, 1
+5, 16, 8, 4, 2, 1
 ```
 
-The function would then be used in the following manner. 
+Its theorized that no matter what the value of **N**, it will eventually reduce
+down to 1 if the above rules are followed.
 
-```java
-BigInteger a = ...;
-BigInteger b = ...;
-BigInteger ab = a.multiply(b);
-```
-
-Note how even those the multiply method takes in only one paramter, it actually
-operates on two inputs (a && b). This means we have a two dimensional input 
-space, we can partition the inputs in the following manner. 
-
-- a and b are both positive. 
-- a and b are both negative.
-- a is positive b is negative. 
-- a is negative b is postibe. 
-
-We should also make sure to check special edge cases. 
-
-- a or b is 0, 1 or -1
-
-Our Partitions end up looking something like this. 
-![Partition Table](/images/multiply-partition.webp)
-
-## Documenting Your Testing Strategy 
-For the example function below, we will docoument our testing strategy. 
-```java
-/**
- * Reverses the end of a string.
- *
- * For example:
- *   reverseEnd("Hello, world", 5)
- *   returns "Hellodlrow ,"
- *
- * With start == 0, reverses the entire text.
- * With start == text.length(), reverses nothing.
- *
- * @param text    non-null String that will have
- *                its end reversed
- * @param start   the index at which the
- *                remainder of the input is
- *                reversed, requires 0 <=
- *                start <= text.length()
- * @return input text with the substring from
- *               start to the end of the string
- *               reversed
- */
-static String reverseEnd(String text, int start)
-```
-
-```java
-/*
- * Testing strategy
- *
- * Partition the inputs as follows:
- * text.length(): 0, 1, > 1
- * start:         0, 1, 1 < start < text.length(),
- *                text.length() - 1, text.length()
- * text.length()-start: 0, 1, even > 1, odd > 1
- *
- * Include even- and odd-length reversals because
- * only odd has a middle element that doesn't move.
- *
- * Exhaustive Cartesian coverage of partitions.
- */
-```
-
-We should also document how each test case was chosen, including white box test.
-```java
-// covers test.length() = 0,
-//        start = 0 = text.length(),
-//        text.length()-start = 0
-@Test public void testEmpty() {
-    assertEquals("", reverseEnd("", 0));
-}
-// ... other test cases ...
-```
-## Testing with TypeScript 
-Adding testing to a typescript project is easy the instructions below follow 
-those provided by Freeman from his book Essential TypeScript. 
-
-```bash
-npm install --save-dev jest ts-jest
-```
-
-Then in our jest.config.js we add
-```js
-module.exports = {
-    roots: ["src"],
-    transform: {"^.+\\.tsx?$": "ts-jest"}
-}
-```
-To test things out create a main.ts file in src 
-```ts
-function sum(a: number, b: number) {
-    returb a + b
-}
-```
-
-Next create a sum.test.js file in `/src/test` 
+### Computing Hailstones
 
 ```js
-const sum = require('../main')
+const hailStone = (n) => {
+    while (n != 1) {
+        console.log(n)
 
-test('Expect sum of 10 + 4 to be 14', () => {
-    expect(sum(10,4)).toBe(14)
-})
-```
+        n = n % 2 === 0 ? n / 2 : 3n + 1
+    }
 
-# Reading 4 Code Review
-
-### Objects for Today's Reading
-- Code review: Reading and discussing code written by somebody else
-- General principles of good coding: things you can look for in every code 
-review, regardless of programming language or program purpose. 
-
-## Code Review 
-Code reviews serve two purposes 
-- **Improving the code:** Finding bugs, anticipating possible bugs, checking the 
-clarity of the code, and checking for consistency with the project's style 
-standards. 
-
-- **Improving the programmer** Code Review is an important way that programmers
-learn and teach each other, about language features, design changes, or coding
-standards. 
-
-
-## Don't Repeat Yourself (DRY)
-Duplicated code is a risk to safety, If you have identical or very similar code
-in two places, then you risk copying over a bug into two locations. A maintainer
-may then fix the bug in one place but not the other. Copy and paste should be
-used with much caution.
-
-## Comments Where needed
-It's important to write specifications for functions to document assumptions
-as well to make our code easier to understand. Here is one example of a function
-specification. 
-
-```java
-/**
- * Compute the hailstone sequence.
- * See http://en.wikipedia.org/wiki/Collatz_conjecture#Statement_of_the_problem
- * @param n starting number of sequence; requires n > 0.
- * @return the hailstone sequence starting at n and ending with 1.
- *         For example, hailstone(3)=[3,10,5,16,8,4,2,1].
- */
-public static List<Integer> hailstoneSequence(int n) {
-    ...
+    console.log(n)
 }
 ```
 
-Be mindful when writing comments, there is no need to transpile code to english
-for instance, the following is an example of poor commenting. 
-
 ```java
-while (n != 1) { // test whether n is 1   (don't write comments like this!)
-   ++i; // increment i
-   l.add(n); // add n to l
+function hailStone(int n) {
+    while (n != 1) {
+        System.out.println(n);
+
+        if (n % 2 == 0) {
+            n = n / 2;
+        } else {
+            n = 3n + 1;
+        }
+    }
+
+    System.out.println(n)
 }
 ```
 
-## One Purpose For Each Variable
-Do not reuse paramters, and don't reuse variables. Feel free to create as many
-variables as needed, they are not a scare resource. Make sure you give your 
-variable good names. When possible its best to declare variables as constants. 
+The importance different between the JavaScript implementation of `hailstone`
+is that the value of **N** is given a mandatory type in JAVA. Java requires that
+you give every variable a type.
 
-Here are some guides to naming variables.
+## Types
 
--methodsAreNamesWithCamelCase
--variablesAreAlsoCamelCase
--CONSTANTS_ARE_IN_ALL_CAPS_WITH_UNDERSCORES
--ClassesAreCapitalized
+A **type** is a set of values and operations which can be performed on those
+values.
 
+Java has several **primative types**, among them
 
+-   `int` (for integers like 5 and -200), but limited to range +/- 2^32.
+-   `long` (for longer integers up to +/- 2^53)
+-   `boolean` (true of false values)
+-   `double` (for floating point values)
+-   `char` (for single characters like `'A'` and `'$'`)
 
+Java has as **object types** such as `String`.
 
+## Static Typing
 
+Java is a **statically-typed language**, so the types of all variables are known
+at compile time, this can help prevent you from accidentally trying to add an
+integer to a character, this is also known as **Static Checking**. Languages
+like python implement **dynamic checking** which checks for those kind of
+mistakes when running the program. And lastly we have **no checking**.
 
+Static Checking Benefits
 
+-   Syntax errors, which checks for puncctiation
+-   Wrong names `Math.sine(2)` will error at compile time. (its sin)
+-   wrong number of arguments.
+-   wrong argument types
+-   wrong return types.
 
+Dynamic Checking Beneifits
 
+-   Illegal argument values. This will error on x / y if y = 0.
+-   Out of range/bounds for index values.
+-   Calling a method on `null` obhect references.
 
+## Dangerous Behavior of Primitive Types
 
+In Java there are some dangerous behavior that could do undetected because Java
+does not report them as errors.
 
+-   **Integer division** `5/2` does not return a fraction or decimal value.
+    Instead Java will quitely return a truncated value instead.
 
+-   **Integer Overflow** Primative values have limits to what values they can
+    store. So what happens when you do an operation that produces a number that is
+    bigger or smaller than those limits? Java will quitely **overflow** the number
+    and wrap it around to be a value within the legal range.
 
+-   **Special values in `float` and `doubles`** The `float` and `double` types
+    have several special values that aren't real numbers. `NaN` (not a number),
+    `POSITIVE_INFINITY`, and `NEGATIVE_INFINITY`, So operations like diving by 0
+    return these values instead of erroring out.
 
+## Arrays and Collections
 
+Java provides datastructures like arrays to store a series of values of a type
+within a list. Arrays are fixed-length, the following is an integer array.
 
+```java
+int[] a = new int[100]
+```
 
+Lets rewrite the hailstone sequence using an array.
 
+```java
+// HailStone with array
+function int[] hailstone(n) {
+    int[] sequence = new int[100]; // @WARN: This is dangerous
 
+    int i = 1
+    sequence[0] = n
+    while (n != 1) {
+        if (n % 2 == 0) {
+            sequence[i] = n / 2;
+        } else {
+            sequence[i] = 3n + 1;
+        }
+        i++;
+    }
 
+    sequence[i] = n;
+    return sequence
+}
+```
 
+There is something very dangerous about the function above and its that the
+sequence array has a limit of 100 values. If we pick a number which has a
+sequence larger than 100 digits, then we're in trouble.
 
+We can remedy this problem by using a datastructure called `List`, unlike Arrays
+List are not fixed length, and can be created with the following syntax.
 
+```java
+List<Integer> list = new ArrayList<Integer>();
+```
 
+List provide the following functionality.
 
-\
+-   indexing: `list.get(2)`
+-   assignment: `list.set(2, 0)`
+-   length: `list.size()`
+
+Some things to clear up, `List` is whats known as an interface, its basically a
+blueprint that defines what an implementation of the datastructure should
+contain. ArrayList is a `class` which implements the spec layed out by `List`.
+
+Now our hailstone function can be changed to be as follows.
+
+```java
+// HailStone with array
+function ArrayList<Integer> hailstone(n) {
+    List<Integer> sequence = new ArrayList<Integer>();
+
+    int i = 0
+    sequence.add(n)
+    while (n != 1) {
+        if (n % 2 == 0) {
+            sequence.add(n / 2);
+        } else {
+            sequence.add(3n + 1);
+        }
+    }
+
+    sequence.add(n);
+    return sequence
+}
+```
+
+## Iterating
+
+Iteration syntax is different in Java compared to JS.
+
+```java
+// Find the max number in a list
+
+int max = 0;
+for (int x: list) {
+    max = Math.max(x, max);
+}
+```
+
+## Methods
+
+In general statements in Java are written inside **methods**, and methods in turn
+are written inside **classes**. We can rewrite hailstone like so.
+
+```java
+public class Hailstone {
+    public static List<Integer> hailstoneSequence(int n) {
+        List<Integer> list = new ArrayList<Integer>();
+
+        while (n != 1) {
+            list.add(n);
+
+            if (n % 2 == 0) {
+                n = n / 2;
+            } else {
+                n = 3 * n + 1;
+            }
+        }
+
+        list.add(n)
+        return list;
+    }
+}
+```
+
+`public` means that any code, anywhere in your program, can refer to the class.
+`static` means that the method doesnt take a self paramter, which is implicit
+in Java anyways. Static methods cannot be called on objects, instead a static
+method should be called using the class name instead of an object.
+
+```java
+Hailstone.hailstoneSequence(83)
+```
+
+## Mutating Values vs. Reassigning Variables
+
+To make a reference immutable, declare it with the `final` keyword.
+
+```java
+final int n = 4;
+```
+
+Now the value of n can never be changed, and any attempt to do so will result
+in an error during compile time.
+
+Good programmers default to immutable references whenever possible to avoid
+change when its not needed.
+
+## Documenting Assumptions
+
+Programs should be written with two goals in mind.
+
+-   communicating with the computer. We need to write programs which our compiler
+    deems sensible. We also need to get the logic right so that it gives the right
+    results as runtime.
+
+-   communicating with other people. We need to make our programs easy to
+    understand to that future developers who work on the same code can understand
+    it as well.
+
+With that in mind we should always comment our assumptions within out code so
+that its obvious what we were thinking when writing. There are multiple ways to
+document assumptions, comment is one way but even carefully chosen variable names,
+and usage of final are ways to document assumptions.
