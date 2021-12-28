@@ -264,3 +264,134 @@ With that in mind we should always comment our assumptions within out code so
 that its obvious what we were thinking when writing. There are multiple ways to
 document assumptions, comment is one way but even carefully chosen variable names,
 and usage of final are ways to document assumptions.
+
+# Reading 2: Basic Java
+
+## Variables
+
+-   **`instance variables (Non-Static Fields)`** Objects can store their state in
+    Non-static fields these fields are unique to each instance of the class and
+    not shared between instances.
+
+-   **`Class Variables`** These are variables created with the static modifier.
+    All instances of a class will share this variable, so there is only one
+    reference for this variable, any changes made to it will be reflected in
+    every instance of the class.
+
+-   **`Local Variables`** Methods also sometimes require a way to store state
+    also. State variables for methods are called local variables.
+
+-   **`Parameters`** Methods declared inside the signature of a method are
+    called parameters.
+
+# Reading 3: Testing
+
+### Objects for reading
+
+-   Understand why testing is important, and why you should test-first program
+-   figure out how to have proper test suite coverage
+-   know when to use black box testing vs white box testing, unit test vs
+    integration test, and automated regression testing.
+
+## Validation
+
+Testing is part of a general process known as validation, which includes.
+
+-   **Formal reasoning** Also called verification, is a way to formally prove that
+    your program is correct logically.
+-   **Code Review** Having someone else read your code.
+-   **Testing** Running your program with carefully selected inputs.
+
+## Test-First Programming
+
+Always test your code as you develop it don't leave it until the end. Test first
+programming follows three steps.
+
+1. Write a specification for the function.
+2. Write test that exercise the specification.
+3. Write the actual code. Once your code passes the test you wrote, you're done.
+
+The `specification` describes the input and output of the function. It list
+parameter types and contraints.
+
+## Choosing Test Cases via Partitioning
+
+To create out test suite we basically want to map our inputs to `subdoamins` and
+then pick at least 1 input from each subdomain.
+
+## Blackbox and Whitebox Testing
+
+`Blackbox` testing is when you write test based solely on the specification of
+the code. `Whitebox testing` means you pick test cases with the implementation
+of the function in mind.
+
+`Specification`
+
+```java
+/**
+ * Reverses the end of a string.
+ *
+ * For example:
+ *   reverseEnd("Hello, world", 5)
+ *   returns "Hellodlrow ,"
+ *
+ * With start == 0, reverses the entire text.
+ * With start == text.length(), reverses nothing.
+ *
+ * @param text    non-null String that will have
+ *                its end reversed
+ * @param start   the index at which the
+ *                remainder of the input is
+ *                reversed, requires 0 <=
+ *                start <= text.length()
+ * @return input text with the substring from
+ *               start to the end of the string
+ *               reversed
+ */
+static String reverseEnd(String text, int start) {}
+```
+
+`Testing strategy`
+
+```java
+/*
+ * Testing strategy
+ *
+ * Partition the inputs as follows:
+ * text.length(): 0, 1, > 1
+ * start:         0, 1, 1 < start < text.length(),
+ *                text.length() - 1, text.length()
+ * text.length()-start: 0, 1, even > 1, odd > 1
+ *
+ * Include even- and odd-length reversals because
+ * only odd has a middle element that doesn't move.
+ *
+ * Exhaustive Cartesian coverage of partitions.
+ */
+```
+
+`Test coverage`
+
+```java
+// covers test.length() = 0,
+//        start = 0 = text.length(),
+//        text.length()-start = 0
+@Test public void testEmpty() {
+    assertEquals("", reverseEnd("", 0));
+}
+
+// ... other test cases ...
+```
+
+## Coverage
+
+When determining if a test suite covers a program well think of the following.
+
+-   **Statement coverage** : is every statement run by some test case?
+-   **Branch coverage**: for every `if` or `while` statement in the prog, are both
+    true and false conditions taken by a test case?
+-   **Path coverage**: Is every possible combination of branches - every path
+    through the program - taken by some test case?
+
+Usually you want to aim for 100% `statement coverage`, but `branch coverage`
+and `path coverage` take a lot more time to implement.
