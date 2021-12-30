@@ -395,3 +395,103 @@ When determining if a test suite covers a program well think of the following.
 
 Usually you want to aim for 100% `statement coverage`, but `branch coverage`
 and `path coverage` take a lot more time to implement.
+
+# Reading 4 Code Review
+
+### Objective for Today's Class
+
+-   Learn how to read and discuss code written by somebody else.
+-   General principles of good coding. Things you can look for in every
+    code review, regardless of programming language or program purpose.
+
+## Bad Code Example 1
+
+The next few sections will use the following code sample as a reference.
+
+``BadCode.java`
+
+```java
+public static int dayOfYear(int month, int dayOfMonth, int year) {
+    if (month == 2) {
+        dayOfMonth += 31;
+    } else if (month == 3) {
+        dayOfMonth += 59;
+    } else if (month == 4) {
+        dayOfMonth += 90;
+    } else if (month == 5) {
+        dayOfMonth += 31 + 28 + 31 + 30;
+    } else if (month == 6) {
+        dayOfMonth += 31 + 28 + 31 + 30 + 31;
+    } else if (month == 7) {
+        dayOfMonth += 31 + 28 + 31 + 30 + 31 + 30;
+    } else if (month == 8) {
+        dayOfMonth += 31 + 28 + 31 + 30 + 31 + 30 + 31;
+    } else if (month == 9) {
+        dayOfMonth += 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31;
+    } else if (month == 10) {
+        dayOfMonth += 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30;
+    } else if (month == 11) {
+        dayOfMonth += 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31;
+    } else if (month == 12) {
+        dayOfMonth += 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 31;
+    }
+    return dayOfMonth;
+}
+```
+
+### Don't Repeat Yourself (DRY)
+
+Dupicated code is a safety concern. If you have identical code in two places,
+and the code has a bug, then the is now buggy in two locations. And you may
+not remember to fix it in both locations. Avoid copy pasting whenever possible.
+It will more often lead to bugs.
+
+### Comments Where Needed
+
+`Specifications` which document methods or classes are a crucial form of
+commenting, and should be written before actual code implementation.
+
+`Hailstone.java`
+
+```java
+/**
+ * Compute the hailstone sequence.
+ * See http://en.wikipedia.org/wiki/Collatz_conjecture#Statement_of_the_problem
+ * @param n starting number of sequence; requires n > 0.
+ * @return the hailstone sequence starting at n and ending with 1.
+ *         For example, hailstone(3)=[3,10,5,16,8,4,2,1].
+ */
+public static List<Integer> hailstoneSequence(int n) {
+    // Code here
+}
+```
+
+`Citations` If you utilize a piece of code form
+an external source like
+stackoverflow it's important to cite that piece of code via comments. This can
+help you avoid copyright issues, additionally the source you get the code from
+may be updated and consequently having a link to where you originally got the
+code from can be an easy way to ensure you have a way to access those updates.
+
+`Citation.java`
+
+```java
+// read a web page into a string
+// see http://stackoverflow.com/questions/4328711/read-url-to-string-in-few-lines-of-java-code
+String mitHomepage = new Scanner(
+    new URL("http://www.mit.edu").openStream(),
+    "UTF-8").useDelimiter("\\A"
+).next();
+```
+
+### Avoid Magic Numbers
+
+`BadCode.java` is full of magic numbers, instead of using only numerics to
+represent the months, it would be more readable to store the months in varaibles
+like January, Febuary, etc..
+
+### One Purpose per Variable
+
+Always leave method parameters alone for the most part, if you need to modify
+them store them in a new variable instead. Use `final` or `const` as much as
+possible to esnrue your variables are onyl set once.
