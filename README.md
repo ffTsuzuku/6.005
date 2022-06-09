@@ -495,3 +495,31 @@ like January, Febuary, etc..
 Always leave method parameters alone for the most part, if you need to modify
 them store them in a new variable instead. Use `final` or `const` as much as
 possible to esnrue your variables are onyl set once.
+
+# Reading 12
+
+#### Objectives..
+
+This reading presents two ideas:
+
+-   Abstract data types
+-   Representation Idependence
+
+## What abstraction Means
+
+Abstract data types are a general principle of software engineering that go by
+different names, and slightly different definitions
+
+-   **Abstraction** Omitting or hiding low-level details with a simpler higher
+    level ideas.
+-   **Modularity** Dividing a system into components/modules that can be designed
+    tested and implemented and reused seperately from the rest of the system.
+-   **Encapsulation** A module is responsible for its own internal behavior, and
+    external bugs cannot damage its integrity.
+-   **Information hiding** Hiding details of a module's implementation from the
+    rest of the system, so that those details can be changed later without
+    changing the rest of the system.
+-   **Seperation of concerns** Making a feature (or 'concern') the responsibility
+    of a single module, rather than spreading it across multiple modules.
+
+### Classifying Types and Operations
