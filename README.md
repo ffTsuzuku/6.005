@@ -523,3 +523,39 @@ different names, and slightly different definitions
     of a single module, rather than spreading it across multiple modules.
 
 ### Classifying Types and Operations
+
+Types whether primitive or use-defined can be classified as either **mutable**
+or **immutable**. Mutable objects can have their values modified, while
+immutable objects cannot, instead new instances of the object need to be created.
+
+The operations of an abstravt type are classified as:
+
+-   **Creators** create new objects of the the type. A creator may take an object
+    as an argument, but not an object of the type being constructed.
+-   **Producers** create new objects from old objects of the type. `concat` for
+    example takes two strings and produces a new one.
+-   **Observers** take objects of the abstract type and return objects of a
+    different type. The `size` method of an array returns an `number`.
+-   **Mutators** change objects. The `push` method of an array for example
+    mutates the array by adding an element to the end.
+
+We can succinctly summarize the information above as follows:
+
+---
+
+| operation | output                    |
+| --------- | ------------------------- |
+| creator   | t\* -> T                  |
+| producer  | T+, t -> T                |
+| observer  | T+, t\* -> t              |
+| mutator   | T+, t\* -> void \| t \| T |
+
+Key:
+
+-   T is an abstract type itself.
+-   t is some other type.
+-   `+` marker indicate the type may occur 1 or more times
+-   `*` indicates that it occurs zero or more times.
+-   `|` indicates `or`
+
+---
