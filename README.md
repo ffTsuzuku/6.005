@@ -559,3 +559,140 @@ Key:
 -   `|` indicates `or`
 
 ---
+
+# Chapter 13
+
+### Objectives
+
+-   Invariants
+-   representation exposure
+-   abstraction functions
+-   representation invariants
+
+## Invariants
+
+The most important property of a good abstract data type is that it **preserves
+its own invariants** an _invariant_ is a property of a program that is always
+true. _Immutibility_ is one example of an important invariant to maintain. A
+abstract data type that preserves its invariants ensures that client actions are
+not able to ruin an invariant.
+
+## Immutability
+
+```ts
+class Tweet {
+    author: string
+    text: string
+    timestamp: Date
+
+    /**
+     * Make a tweet
+     * @param author Twitter user who wrote the tweet
+     * @param text text of the tweet
+     * @param timestamp date/time
+     */
+    constructor(author: string, text: string, date: Date) {
+        this.author = author
+        this.text = text
+        this.timestamp = timestamp
+    }
+}
+```
+
+The first problem with our Tweet ADT is that its currently not immutable, anyone
+can modify the properties it contains.
+
+```ts
+const t = new Tweet('naruto', "That's my ninja way, believe it!", new Date())
+
+t.author = 'Sasuke'
+```
+
+This is whats known as **representation exposure**, which means code outside the
+class can modify the representation directly. An easy way to prevent this would
+be to privatize our class fields.
+
+```ts
+class Tweet {
+    private author: string
+    private text: string
+    private timestamp: Date
+
+    constructor(author, text, timestamp) {
+        this.author = author
+        this.text = text
+        this.timestamp = timestamp
+    }
+
+    public getAuthor() {
+        return this.author
+    }
+
+    public getText() {
+        return this.text
+    }
+
+    public getTimestamp() {
+        return this.timestamp
+    }
+}
+```
+
+Unfortunately this does not fix the problem our representation is still exposed.
+Consider the following example.
+
+```ts
+function retweetLater(t: Tweet) {
+    const d = t.getTimestamp()
+    d.setHours(d.getHours() + 1)
+
+    return new Tweet('NarutoFan', t.getText(), d)
+}
+```
+
+Our retweet function takes a tweet and repost it an hour later. The problem here
+is that Date is not an immutable object, and so when that function called the
+`setHours` method, it modifies the original tweet's date. This kind of exposure
+can be solved by making a defensive copy of the field so that access to the
+original does not leak out.
+
+```ts
+getTimestamp() {
+    return new Date(this.timestamp.getTime())
+}
+```
+
+Believe it or not our ADT is still not fully immutable. Consider the following
+example:
+
+```ts
+const d = new Date()
+const t = new Tweet(
+    'GaiSensei',
+    "That's it, Lee! Let the power of youth explode!!",
+    d
+)
+
+d.setHour(20)
+```
+
+Since the client holds a reference to the date that gets passed to our ADT it
+still has the ability to modify it. This is alsos pretty easy to solve by
+making a defensive clone of the date in our ADT's constructor.
+
+```ts
+constructor(author: string, text: string, timestamp: Date) {
+    this.author = author
+    this.text = text
+    this.timestamp = new Date(timestamp.getTime())
+}
+```
+
+### Immutable Wrappers Around Mutable Data Types
+
+If your ADT Is massive and copying is expensive you may consider wrapping the
+ADT which disables access to all mutators - set(), add(), remove(), etc... This
+gives immutability at runtime but not compile time, the compilers wont complain
+if it see you trying to access the mutators.
+
+## Rep Invariant and Abstraction
